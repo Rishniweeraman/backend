@@ -2,12 +2,13 @@
  * Created by User on 5/10/2017.
  */
 
+
 var express=require('express');
 var app=express();
 var bodyParser=require('body-parser');
 var mongoose=require('mongoose');
 
-var database;
+
 var Message=mongoose.model('Message',{
     msg:String
 });
@@ -20,6 +21,8 @@ app.use(function (req,res,next) {
     next();
 })
 
+app.get('/api/message',GetMessages);
+
 app.post('/api/message',function (req,res) {
     console.log(req.body);
     var message=new Message(req.body);
@@ -27,14 +30,23 @@ app.post('/api/message',function (req,res) {
     res.status(200);
 })
 
+function GetMessages(req,res)
+{
+    Message.find({}).exec(function (err,result) {
+        res.send(result);
+    })
+}
+
 mongoose.connect("mongodb://localhost:27017/test",function (err,db) {
     if (!err)
     {
         console.log("we are connected to mongo");
-        database=db;
+
 
     }
 })
 var server=app.listen(5000,function(){
     console.log('listening on port',server.address().port);
 })
+
+
