@@ -8,11 +8,17 @@ var app=express();
 var bodyParser=require('body-parser');
 var mongoose=require('mongoose');
 
-
+var Message=require('./models/message');
+var Drug=require('./models/drug');
+/*
 var Message=mongoose.model('Message',{
     msg:String
 });
 
+var Drug=mongoose.model('Drug',{
+    name:String
+});
+*/
 app.use(bodyParser.json());
 
 app.use(function (req,res,next) {
@@ -22,6 +28,7 @@ app.use(function (req,res,next) {
 })
 
 app.get('/api/message',GetMessages);
+app.get('/api/drug',GetDrugs);
 
 app.post('/api/message',function (req,res) {
     console.log(req.body);
@@ -30,9 +37,24 @@ app.post('/api/message',function (req,res) {
     res.status(200);
 })
 
+app.post('/api/drug',function (req,res) {
+    console.log(req.body);
+    var drug=new Drug(req.body);
+    drug.save();
+    res.status(200);
+
+})
+
 function GetMessages(req,res)
 {
     Message.find({}).exec(function (err,result) {
+        res.send(result);
+    })
+}
+
+function GetDrugs(req,res)
+{
+    Drug.find({}).exec(function (err,result) {
         res.send(result);
     })
 }
